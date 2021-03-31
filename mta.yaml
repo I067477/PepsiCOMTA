@@ -1,0 +1,65 @@
+ID: PepsiCoMTA
+_schema-version: '2.1'
+version: 0.0.1
+
+modules:
+ - name: Database
+   type: hdb
+   path: Database
+   requires:
+    - name: hdi_Database
+
+
+ - name: Database1
+   type: hdb
+   path: Database1
+   requires:
+    - name: hdi_Database1
+
+
+ - name: DWF
+   type: dwf
+   path: DWF
+   requires:
+    - name: dwf-edw-client
+
+
+ - name: Backend
+   type: nodejs
+   path: Backend
+   
+   requires:
+      - name: hdi_Database1
+      - name: dwf-edw-client
+   properties:
+     memory: 512M
+     API_END_POINT: "${xs-api-url}"
+#     SAP_JWT_TRUST_ACL: "[{\"clientid\":\"*\",\"identityzone\":\"*\"}]"
+    
+   
+   
+   provides:
+    - name: Backend_api
+      properties:
+         url: ${default-url}
+
+resources:
+ - name: hdi_Database
+   properties:
+      hdi-container-name: ${service-name}
+   type: com.sap.xs.hdi-container
+
+ - name: hdi_Database1
+   parameters:
+      config:
+         schema: PepsiCoMTA
+   properties:
+      hdi-container-name_2: ${service-name}
+   type: com.sap.xs.hdi-container
+
+
+ - name: dwf-edw-client
+   properties:
+      dwf-edw-client-name: ${service-name}
+   type: com.sap.xs.dwf-edw-client
+
